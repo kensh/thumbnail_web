@@ -1,16 +1,15 @@
+// express
 const express = require("express");
 const app = express();
 
-
+// file upload
 const multer = require('multer');
 const path = require('path');
 const upDir = path.join(__dirname, 'upload'); 
 const uploadDir = multer({dest: upDir}); 
 
-
-const server = app.listen(3000, () => {
-    console.log("Node.js is listening to PORT:" + server.address().port);
-});
+// rabbit
+const rabbit = require('./rabbit.js');
 
 const form = 
     '<form method="POST" action="/image" enctype="multipart/form-data">' +
@@ -18,6 +17,10 @@ const form =
       '<input type="submit" value="upload" />' +
     '</form>';
 
+
+const server = app.listen(3000, () => {
+    console.log("Node.js is listening to PORT:" + server.address().port);
+});
 
 
 app.get('/', (req, res) => { 
@@ -32,14 +35,16 @@ app.post("/image", uploadDir.single('upFile'), (req, res) => {
     console.log('original file name:' + req.file.originalname);
     console.log('saved file path:' + req.file.path);
     console.log('saved file name:' + req.file.filename);
+
+    rabbit.send(req.file.filename);
   }
   res.send(form);
 });
 
 
-app.get("/image/:imageId/thumbnail", function(req, res, next){
-    console.log(req.params.imageId);
-    res.json(photoList);
+app.get("/image/:imageId/thumbnail", (req, res) => {
+  console.log(req.params.imageId);
+  res.json({});
 });
 
 
