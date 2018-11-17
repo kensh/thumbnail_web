@@ -52,12 +52,14 @@ app.get("/image", (req, res) => {
 
 
 app.get("/image/:imageId/thumbnail", (req, res) => {
-  console.log(req.params.imageId);
-  cache.get('thumbnail_' + req.params.imageId).then((reply) => {
+  let imageId = req.params.imageId;
+  console.log(imageId);
+  cache.get('thumbnail_' + imageId).then((reply) => {
     if(!reply){
       res.status(404);
     } else {  
-      res.json(reply);
+      let thumbnail = __dirname + '/upload/thumbnail_' + imageId;
+      res.download(thumbnail);
     } 
   }).catch((e) => {
     console.log('error: ', e);
