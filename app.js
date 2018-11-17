@@ -36,7 +36,10 @@ app.post("/image", uploadDir.single('upFile'), (req, res) => {
     console.log('saved file path:' + req.file.path);
     console.log('saved file name:' + req.file.filename);
 
-    queue.enqueue(req.file.filename);
+    queue.enqueue({
+      filename: req.file.filename,
+      originalname: req.file.originalname
+    });
   }
   res.send(form);
 });
