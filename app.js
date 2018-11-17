@@ -1,4 +1,3 @@
-// express
 const express = require("express");
 const app = express();
 
@@ -8,15 +7,15 @@ const path = require('path');
 const upDir = path.join(__dirname, 'upload'); 
 const uploadDir = multer({dest: upDir}); 
 
-// queue
 const queue = require('./rabbit.js');
+const cache = require('./redis.js');
 
 const form = 
     '<form method="POST" action="/image" enctype="multipart/form-data">' +
       '<input type="file" name="upFile" /><br />' +
       '<input type="submit" value="upload" />' +
-    '</form>';
-
+    '</form><hr />' +
+    '<iframe src="./image"/>';
 
 const server = app.listen(3000, () => {
     console.log("Node.js is listening to PORT:" + server.address().port);
@@ -45,9 +44,26 @@ app.post("/image", uploadDir.single('upFile'), (req, res) => {
 });
 
 
+app.get("/image", (req, res) => {
+  cache.getall().then((replies) => {
+    res.json(replies);
+  });
+});
+
+
 app.get("/image/:imageId/thumbnail", (req, res) => {
   console.log(req.params.imageId);
-  res.json({});
+  cache.get('thumbnail_' + req.params.imageId).then((reply) => {
+    if(!reply){
+      res.status(404);
+    } else {  
+      res.json(reply);
+    } 
+  }).catch((e) => {
+    console.log('error: ', e);
+    res.status(404);
+    res.send();
+  });
 });
 
 
