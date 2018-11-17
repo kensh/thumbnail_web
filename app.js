@@ -8,8 +8,8 @@ const path = require('path');
 const upDir = path.join(__dirname, 'upload'); 
 const uploadDir = multer({dest: upDir}); 
 
-// rabbit
-const rabbit = require('./rabbit.js');
+// queue
+const queue = require('./rabbit.js');
 
 const form = 
     '<form method="POST" action="/image" enctype="multipart/form-data">' +
@@ -36,7 +36,7 @@ app.post("/image", uploadDir.single('upFile'), (req, res) => {
     console.log('saved file path:' + req.file.path);
     console.log('saved file name:' + req.file.filename);
 
-    rabbit.send(req.file.filename);
+    queue.enqueue(req.file.filename);
   }
   res.send(form);
 });

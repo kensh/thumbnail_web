@@ -23,8 +23,8 @@ const factory = () => {
       
       channel.assertQueue(QUEUE, {durable: true});
       channel.sendToQueue(QUEUE, new Buffer.from(msg), {persistent: true});
-      console.log(" [x] Sent '%s'", msg);
+      console.log(" [x] enqueued '%s'", msg);
    };
 }; 
 
-exports.send = factory(); 
+exports.enqueue = factory(); 
