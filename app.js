@@ -15,14 +15,12 @@ const form =
       '<input type="file" name="upFile" /><br />' +
       '<input type="submit" value="upload" />' +
     '</form><hr />' +
-    '<iframe src="./image"></iframe>' + 
-    '<img src="./image/ddcd280fae5b9418bcf2c7fd3679362f/thumbnail" />';
+    '<iframe src="/image"></iframe>'; 
 
 const server = app.listen(3000, () => {
     console.log("Node.js is listening to PORT:" + server.address().port);
 });
 
-app.use(express.static(__dirname + '/upload'));
 
 app.get('/', (req, res) => { 
   res.send(form);
@@ -42,7 +40,7 @@ app.post("/image", uploadDir.single('upFile'), (req, res) => {
       originalname: req.file.originalname
     });
   }
-  res.send(form);
+  res.json({filename: req.file.filename});
 });
 
 
@@ -56,13 +54,10 @@ app.get("/image", (req, res) => {
 app.get("/image/:imageId/thumbnail", (req, res) => {
   let imageId = req.params.imageId;
   console.log(imageId);
+
   cache.get('thumbnail_' + imageId).then((reply) => {
-    if(!reply){
-      res.status(404);
-    } else {  
-      let thumbnail = __dirname + '/upload/thumbnail_' + imageId;
-      res.sendFile(thumbnail);
-    } 
+    let thumbnail = __dirname + '/upload/thumbnail_' + imageId + '.png';
+    res.sendFile(thumbnail);
   }).catch((e) => {
     console.log('error: ', e);
     res.status(404);

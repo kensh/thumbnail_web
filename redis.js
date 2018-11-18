@@ -11,7 +11,7 @@ const get = (key) => {
   return new Promise((resolve, reject) => {
     client.get(key, (err, reply) => {
       if(!reply){
-        reject();
+        reject('not found');
       } else {
         console.log("reply: '%s'", reply);
         resolve(reply);
