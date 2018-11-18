@@ -4,7 +4,7 @@ const QUEUE = 'task_queue';
 const connect = () => {
 
   return new Promise((resolve, reject) => {
-    rabbit.connect('amqp://localhost', (err, con) => {
+    rabbit.connect('amqp://rabbitmq', (err, con) => {
       con.createChannel((err, ch) => {
     	resolve(ch);
       });
