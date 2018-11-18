@@ -9,14 +9,26 @@ var formData = {
 
 describe("Web Server", function() {
   describe("thumbnail test", function() {
-    it("POST /image returns status code 200", function(done) {
+    let imageId = null;
 
+    it("POST /image returns status code 200", function(done) {
       request.post({url: base_url + '/image', formData: formData}, function (err, response, body) {
-        console.log('file upload done');
+        imageId = JSON.parse(body).filename;
+        console.log('file upload done: ' + imageId);
         expect(response.statusCode).toBe(200);
         done();
       });
-
     });
+
+    it("GET thumbnail returns status code 200", function(done) {
+      setTimeout(function(){
+        request.get(base_url + "/image/" + imageId + '/thumbnail', function(error, response, body) {
+          console.log('file download done');
+          expect(response.statusCode).toBe(200);
+          done();
+        });
+      },1000);
+    });
+
   });
 });
